@@ -9,6 +9,14 @@ public class ThreeDimensionalShape {
 	private int[][] lines;
 	private int[][] shapes;
 	
+	ThreeDimensionalShape(){
+		x = new double[0];
+		y = new double[0];
+		z = new double[0];
+		lines = new int[0][];
+		shapes = new int[0][];
+	}
+	
 	public ThreeDimensionalShape(double[] X, double[] Y, double[] Z, int[][] Lines, int[][] Shapes){
 		x = X;
 		y = Y;

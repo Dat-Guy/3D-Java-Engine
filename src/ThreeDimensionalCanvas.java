@@ -7,46 +7,65 @@ import java.util.ArrayList;
 import static java.lang.Math.round;
 
 public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListener {
+	
+	//AWT and SWING components
 	private final JFrame frame;
 	private final Canvas canvas;
 	private final Graphics2D graphics;
+	
+	//Global Constants
 	private final Color background;
+	private final Color textColor;
 	private final int centerX;
 	private final int centerY;
 	private final double FOV;
+	
+	//Working varibles (such as current mouse position, shapes to be rendered, and shape rotation)
 	private double rotX = 0;
 	private double rotY = 0;
+	private double camX = 0;
+	private double camY = 0;
 	private double counter;
 	private ArrayList<Polygon> storedFaces = new ArrayList<>();
 	private ArrayList<Double> zIndex = new ArrayList<>();
 	private ArrayList<Color> faceColors = new ArrayList<>();
 	private ArrayList<Color> lineColors = new ArrayList<>();
-	private final Object mouseLock = new Object();
 	private double mouseX = -1;
 	private double mouseY = -1;
+	private char[] debug = "foo".toCharArray();
 	
-	public ThreeDimensionalCanvas(double FOV, int width, int height, int centerX, int centerY, Color background){
+	//Constructor. By default, it accepts FOV, canvas width, canvas height, canvas center of x and y, and background color
+	public ThreeDimensionalCanvas(double FOV, int width, int height, int centerX, int centerY, Color background, Color textColor){
+		//Make a frame to hold display, configure
 		frame = new JFrame("3D Display");
 		frame.setSize(width, height);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		//Make a canvas to draw on, configure
 		canvas = new Canvas();
 		canvas.setSize(width, height);
 		
+		//Add canvas to frame
 		frame.add(canvas);
 		frame.setVisible(true);
 		
+		//Get canvas graphics, configure background
 		graphics = (Graphics2D) canvas.getGraphics();
 		this.background = background;
+		this.textColor = textColor;
 		graphics.setBackground(background);
 		
+		//Set constants
 		this.centerX = centerX;
 		this.centerY = centerY;
 		this.FOV = FOV;
 		
+		//Setup event listeners
 		canvas.addMouseMotionListener(this);
 		addMouseMotionListener(this);
 	}
+	//Processes a shape for further use. Accepts lists of the x, y, and z coords of various points; Lists of all line
+	//pairs and shape groups; rotation values (in degress) along the X, Y, and Z axis
 	private ThreeDimensionalShape processShape(double[] x, double[] y, double[] z,
 	                            int[][] lineList, int[][] faceList,
 	                            double thetaX, double thetaY, double thetaZ){
@@ -105,8 +124,28 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 			y[i] = cosTheta[2] * Y + sinTheta[2] * X + centerY;
 		}
 		
+		sinTheta = new double[]{Math.sin(camX), Math.sin(camY)};
+		cosTheta = new double[]{Math.cos(camX), Math.cos(camY)};
+		
+		for (var i = 0; i < pointCount; i++){
+			double Y = y[i];
+			double Z = z[i];
+			y[i] = cosTheta[0] * Y - sinTheta[0] * Z;
+			z[i] = cosTheta[0] * Z + sinTheta[0] * Y;
+		}
+		
+		for (var i = 0; i < pointCount; i++){
+			double X = x[i];
+			double Z = z[i];
+			x[i] = cosTheta[1] * X - sinTheta[1] * Z;
+			z[i] = cosTheta[1] * Z + sinTheta[1] * X;
+		}
+		
 		return new ThreeDimensionalShape(x, y, z, lineList, faceList);
 	}
+	//Draw a 3D Shape on top of the canvas, regardless of previously drawn objects
+	//Accepts lists of point coords, lists of line pairs and shape groups, rotation for X, Y, and Z axis,
+	//color of the outline, and color of the face
 	public void draw3DShape(double[] x, double[] y, double[] z,
 	                        int[][] lineList, int[][] faceList,
 	                        double thetaX, double thetaY, double thetaZ,
@@ -142,7 +181,7 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 		}
 		
 	}
-	
+	//Adds a 3D Shape to the draw queue...same as draw3DShape, but shapes stack relative to all of their components
 	public void add3DShape(double[] x, double[] y, double[] z, int[][] lineList, int[][] faceList, double thetaX, double thetaY, double thetaZ, Color lineColor, Color faceColor){
 		ThreeDimensionalShape shape = processShape(x,y,z,lineList,faceList,thetaX,thetaY,thetaZ);
 		ArrayList<Polygon> polygons = shape.getPolygons(centerX, centerY, FOV);
@@ -153,8 +192,10 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 			lineColors.add(lineColor);
 		}
 	}
-	
+	//TODO: Figure out better clipping method
+	//Draws all the shapes in the draw queue...if clear is true, the draw queue should be cleared
 	public void drawShapes(boolean clear){
+		
 		ArrayList<Color> faceColorCache = (ArrayList<Color>) faceColors.clone();
 		ArrayList<Color> lineColorCache = (ArrayList<Color>) lineColors.clone();
 		ArrayList<Polygon> shapeCache = (ArrayList<Polygon>) storedFaces.clone();
@@ -164,7 +205,7 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 		double lowZValue;
 		int lowZIndex;
 		for (var i = 0; i < size; i++){
-			lowZValue = 1e300;
+			lowZValue = 1.0/0.0;
 			lowZIndex = -1;
 			for (var j = 0; j < storedFaces.size(); j++){
 				if (lowZValue > zIndex.get(j)){
@@ -172,10 +213,17 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 					lowZIndex = j;
 				}
 			}
-			graphics.setColor(faceColors.get(lowZIndex));
-			graphics.fillPolygon(storedFaces.get(lowZIndex));
-			graphics.setColor(lineColors.get(lowZIndex));
-			graphics.drawPolygon(storedFaces.get(lowZIndex));
+			double avgPoint = 0;
+			for (var j = 0; j < storedFaces.get(lowZIndex).npoints; j++){
+				avgPoint += storedFaces.get(lowZIndex).xpoints[j] + storedFaces.get(lowZIndex).ypoints[j];
+			}
+			avgPoint /= storedFaces.get(lowZIndex).npoints * 2;
+			if (Math.abs(lowZValue / avgPoint) > 5 && lowZValue < 10) {
+				graphics.setColor(faceColors.get(lowZIndex));
+				graphics.fillPolygon(storedFaces.get(lowZIndex));
+				graphics.setColor(lineColors.get(lowZIndex));
+				graphics.drawPolygon(storedFaces.get(lowZIndex));
+			}
 			
 			faceColors.remove(lowZIndex);
 			storedFaces.remove(lowZIndex);
@@ -190,6 +238,7 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 			zIndex = zIndexCache;
 		}
 	}
+	//Clears the canvas, and if clearShapes is true, clear the draw queue
 	public void clear(boolean clearShapes){
 		graphics.setColor(background);
 		graphics.fillRect(0,0,canvas.getWidth(),canvas.getHeight());
@@ -198,50 +247,65 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 			zIndex.clear();
 		}
 	}
+	//Basic update
 	public void update(){
 		frame.repaint();
 	}
+	//Get canvas width
 	public int getWidth(){
 		return frame.getWidth();
 	}
+	//Get canvas height
 	public int getHeight(){
 		return frame.getHeight();
 	}
-	
+	//Add to shape rotation
 	public void addRotX(double rotX) {
 		this.rotX += rotX;
 	}
+	//Add to shape rotation
 	public void addRotY(double rotY){
 		this.rotY += rotY;
 	}
+	
+	public void setCamX(double rotX){ this.camX = rotX; }
+	public void setCamY(double rotY){ this.camY = rotY; }
+	//Default loop (for testing purposes)
 	public void loop(){
 		clear(false);
+		graphics.setColor(textColor);
+		graphics.drawChars(debug.clone(), 0, debug.length, 10, 10);
 		add3DShape(new double[]{-1500,-1500, 500, 500, -1500, -1500, 500, 500}, new double[]{-1000, 1000, -1000, 1000, -1000, 1000, -1000, 1000}, new double[]{-5000, -5000, -5000, -5000, -7000, -7000, -7000, -7000},
 				new int[][]{},
 				new int[][]{new int[]{0,2,3,1}, new int[]{4,6,7,5}, new int[]{0,4,5,1}, new int[]{1,5,7,3}, new int[]{2,6,7,3}, new int[]{0,4,6,2}},
-				Math.toRadians(rotX+20), Math.toRadians(rotY+20), Math.toRadians(0),
-				new Color(255, 255, 255), new Color(0, 2, 122));
+				Math.toRadians(rotX+20), Math.toRadians(rotY), Math.toRadians(0),
+				new Color(255, 255, 255), new Color(0, 11, 141, 200));
 		add3DShape(new double[]{-500,-500, 1500, 1500, -500, -500, 1500, 1500}, new double[]{-1000, 1000, -1000, 1000, -1000, 1000, -1000, 1000}, new double[]{-5000, -5000, -5000, -5000, -7000, -7000, -7000, -7000},
 				new int[][]{},
 				new int[][]{new int[]{0,2,3,1}, new int[]{4,6,7,5}, new int[]{0,4,5,1}, new int[]{1,5,7,3}, new int[]{2,6,7,3}, new int[]{0,4,6,2}},
-				Math.toRadians(rotX+20), Math.toRadians(rotY+20), Math.toRadians(0),
-				new Color(255, 255, 255), new Color(122, 0, 2));
+				Math.toRadians(rotX-20), Math.toRadians(rotY+20), Math.toRadians(0),
+				new Color(255, 255, 255), new Color(122, 0, 2, 200));
 		drawShapes(true);
 		update();
 		counter++;
 	}
-	
+	//Mouse move event
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		mouseX = e.getX();
 		mouseY = e.getY();
+		
+		setCamY(Math.toRadians(centerX - e.getX()));
+		setCamX(Math.max(Math.min(Math.toRadians(centerY - e.getY()), Math.PI / 2), -Math.PI / 2));
+		
+		debug = ("X rotation: " + String.valueOf(centerX - e.getX()) + "\r\nY rotation: " + String.valueOf(Math.max(Math.min(centerY - e.getY(), 90), -90))).toCharArray();
 	}
-	
+	//Mouse drag event
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (mouseX != -1 && mouseY != -1) {
-			addRotY((mouseX - e.getX()) / 2);
-			addRotX((mouseY - e.getY()) / 2);
+			//addRotY((mouseX - e.getX()) / 2);
+			//addRotX((mouseY - e.getY()) / 2);
 		}
 		
 		mouseX = e.getX();

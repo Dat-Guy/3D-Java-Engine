@@ -8,7 +8,7 @@ import java.awt.event.MouseMotionListener;
 public class Main {
     
     public static void main(String[] args) {
-        ThreeDimensionalCanvas canvas = new ThreeDimensionalCanvas(500, 600, 600, 300,300, new Color(0,0,0));
+        ThreeDimensionalCanvas canvas = new ThreeDimensionalCanvas(250, 600, 600, 300,300, new Color(0,0,0), new Color(255,255,255));
         canvas.clear(true);
         MouseMotionListener dragTask = new MouseMotionListener() {
             @Override
