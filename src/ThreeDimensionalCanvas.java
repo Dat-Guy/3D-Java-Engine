@@ -1,12 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 
-import static java.lang.Math.round;
+import static java.lang.Math.*;
 
-public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListener {
+public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListener, KeyListener {
 	
 	//AWT and SWING components
 	private final JFrame frame;
@@ -21,10 +23,15 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 	private final double FOV;
 	
 	//Working varibles (such as current mouse position, shapes to be rendered, and shape rotation)
+	private boolean[] keyValues = new boolean[5];
 	private double rotX = 0;
 	private double rotY = 0;
+	private double camRotX = 0;
+	private double camRotY = 0;
 	private double camX = 0;
 	private double camY = 0;
+	private double volY = 0;
+	private double camZ = 0;
 	private double counter;
 	private ArrayList<Polygon> storedFaces = new ArrayList<>();
 	private ArrayList<Double> zIndex = new ArrayList<>();
@@ -32,7 +39,7 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 	private ArrayList<Color> lineColors = new ArrayList<>();
 	private double mouseX = -1;
 	private double mouseY = -1;
-	private char[] debug = "foo".toCharArray();
+	private char[] debug = "Move mouse to center of display!".toCharArray();
 	
 	//Constructor. By default, it accepts FOV, canvas width, canvas height, canvas center of x and y, and background color
 	public ThreeDimensionalCanvas(double FOV, int width, int height, int centerX, int centerY, Color background, Color textColor){
@@ -58,11 +65,13 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 		//Set constants
 		this.centerX = centerX;
 		this.centerY = centerY;
+		
 		this.FOV = FOV;
 		
 		//Setup event listeners
 		canvas.addMouseMotionListener(this);
 		addMouseMotionListener(this);
+		canvas.addKeyListener(this);
 	}
 	//Processes a shape for further use. Accepts lists of the x, y, and z coords of various points; Lists of all line
 	//pairs and shape groups; rotation values (in degress) along the X, Y, and Z axis
@@ -86,6 +95,12 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 		
 		int pointCount = x.length;
 		
+		for (var i = 0; i < pointCount; i++){
+			x[i] -= camX;
+			y[i] -= camY;
+			z[i] -= camZ;
+		}
+		
 		double centerX = 0;
 		double centerY = 0;
 		double centerZ = 0;
@@ -100,8 +115,8 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 		centerY /= y.length;
 		centerZ /= z.length;
 		
-		double[] sinTheta = new double[]{Math.sin(thetaX), Math.sin(thetaY), Math.sin(thetaZ)};
-		double[] cosTheta = new double[]{Math.cos(thetaX), Math.cos(thetaY), Math.cos(thetaZ)};
+		double[] sinTheta = new double[]{sin(thetaX), sin(thetaY), sin(thetaZ)};
+		double[] cosTheta = new double[]{cos(thetaX), cos(thetaY), cos(thetaZ)};
 		
 		for (var i = 0; i < pointCount; i++){
 			double Y = y[i] - centerY;
@@ -124,21 +139,31 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 			y[i] = cosTheta[2] * Y + sinTheta[2] * X + centerY;
 		}
 		
-		sinTheta = new double[]{Math.sin(camX), Math.sin(camY)};
-		cosTheta = new double[]{Math.cos(camX), Math.cos(camY)};
-		
-		for (var i = 0; i < pointCount; i++){
-			double Y = y[i];
-			double Z = z[i];
-			y[i] = cosTheta[0] * Y - sinTheta[0] * Z;
-			z[i] = cosTheta[0] * Z + sinTheta[0] * Y;
-		}
+		sinTheta = new double[]{-sin(camRotX), sin(camRotY)};
+		cosTheta = new double[]{-cos(camRotX), cos(camRotY)};
 		
 		for (var i = 0; i < pointCount; i++){
 			double X = x[i];
 			double Z = z[i];
 			x[i] = cosTheta[1] * X - sinTheta[1] * Z;
 			z[i] = cosTheta[1] * Z + sinTheta[1] * X;
+		}
+		
+		for (var i = 0; i < pointCount; i++){
+			double X = x[i];
+			double Y = y[i];
+			double Z = z[i];
+			double Yang;
+			x[i] = cosTheta[0] * X - sinTheta[0] * Y;
+			z[i] = cosTheta[0] * Z - sinTheta[0] * Y;
+			y[i] = cosTheta[0] * Y - sinTheta[0] * Z + sinTheta[0] * X;
+		}
+		
+		for (var i = 0; i < pointCount; i++){
+			double X = x[i];
+			double Y = y[i];
+			double Z = z[i];
+			;
 		}
 		
 		return new ThreeDimensionalShape(x, y, z, lineList, faceList);
@@ -260,34 +285,74 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 		return frame.getHeight();
 	}
 	//Add to shape rotation
-	public void addRotX(double rotX) {
-		this.rotX += rotX;
+	public void setRotX(double rotX) {
+		this.rotX = rotX;
 	}
 	//Add to shape rotation
-	public void addRotY(double rotY){
-		this.rotY += rotY;
+	public void setRotY(double rotY){
+		this.rotY = rotY;
 	}
 	
-	public void setCamX(double rotX){ this.camX = rotX; }
-	public void setCamY(double rotY){ this.camY = rotY; }
+	public void setCamRotX(double rotX){ this.camRotX = rotX; }
+	public void setCamRotY(double rotY){ this.camRotY = rotY; }
+	
+	public void setCamX(double camX) {
+		this.camX = camX;
+	}
+	
+	public void setCamY(double camY) {
+		this.camY = camY;
+	}
+	
+	public void setCamZ(double camZ) {
+		this.camZ = camZ;
+	}
+	
+	public void drawText(char[] text, int x, int y){
+		graphics.setColor(textColor);
+		graphics.drawChars(text.clone(), 0, text.length, x, y);
+	}
+	
+	public boolean[] getKeyValues() {
+		return keyValues;
+	}
+	
 	//Default loop (for testing purposes)
 	public void loop(){
 		clear(false);
-		graphics.setColor(textColor);
-		graphics.drawChars(debug.clone(), 0, debug.length, 10, 10);
-		add3DShape(new double[]{-1500,-1500, 500, 500, -1500, -1500, 500, 500}, new double[]{-1000, 1000, -1000, 1000, -1000, 1000, -1000, 1000}, new double[]{-5000, -5000, -5000, -5000, -7000, -7000, -7000, -7000},
+		drawText(debug, 10, 10);
+		add3DShape(new double[]{-1500,-1500, 500, 500, -1500, -1500, 500, 500}, new double[]{-1000, 1000, -1000, 1000, -1000, 1000, -1000, 1000}, new double[]{5000, 5000, 5000, 5000, 7000, 7000, 7000, 7000},
 				new int[][]{},
 				new int[][]{new int[]{0,2,3,1}, new int[]{4,6,7,5}, new int[]{0,4,5,1}, new int[]{1,5,7,3}, new int[]{2,6,7,3}, new int[]{0,4,6,2}},
 				Math.toRadians(rotX+20), Math.toRadians(rotY), Math.toRadians(0),
 				new Color(255, 255, 255), new Color(0, 11, 141, 200));
-		add3DShape(new double[]{-500,-500, 1500, 1500, -500, -500, 1500, 1500}, new double[]{-1000, 1000, -1000, 1000, -1000, 1000, -1000, 1000}, new double[]{-5000, -5000, -5000, -5000, -7000, -7000, -7000, -7000},
+		add3DShape(new double[]{-500,-500, 1500, 1500, -500, -500, 1500, 1500}, new double[]{-1000, 1000, -1000, 1000, -1000, 1000, -1000, 1000}, new double[]{5000, 5000, 5000, 5000, 7000, 7000, 7000, 7000},
 				new int[][]{},
 				new int[][]{new int[]{0,2,3,1}, new int[]{4,6,7,5}, new int[]{0,4,5,1}, new int[]{1,5,7,3}, new int[]{2,6,7,3}, new int[]{0,4,6,2}},
 				Math.toRadians(rotX-20), Math.toRadians(rotY+20), Math.toRadians(0),
 				new Color(255, 255, 255), new Color(122, 0, 2, 200));
+		add3DShape(new double[]{-50000,-50000, 50000, 50000, -50000, -50000, 50000, 50000}, new double[]{-1001, -1000, -1001, -1000, -1001, -1000, -1001, -1000}, new double[]{-50000, -50000, -50000, -50000, 50000, 50000, 50000, 50000},
+				new int[][]{},
+				new int[][]{new int[]{0,2,3,1}, new int[]{4,6,7,5}, new int[]{0,4,5,1}, new int[]{1,5,7,3}, new int[]{2,6,7,3}, new int[]{0,4,6,2}},
+				Math.toRadians(rotX-20), Math.toRadians(rotY+20), Math.toRadians(0),
+				new Color(255, 255, 255), new Color(0, 122, 16, 80));
 		drawShapes(true);
 		update();
 		counter++;
+		
+		//System.out.print("UP: " + keyValues[0] + " RIGHT: " + keyValues[1] + " DOWN: " + keyValues[2] + " LEFT: " + keyValues[3] + " SPACE: " + keyValues[4]);
+		
+		setCamZ(camZ - (keyValues[2] ? 50 : 0) * cos(camRotY) + (keyValues[0] ? 50 : 0) * cos(camRotY) - (keyValues[3] ? 50 : 0) * sin(camRotY) + (keyValues[1] ? 50 : 0) * sin(camRotY));
+		setCamX(camX - (keyValues[1] ? 50 : 0) * cos(camRotY) + (keyValues[3] ? 50 : 0) * cos(camRotY) - (keyValues[2] ? 50 : 0) * sin(camRotY) + (keyValues[0] ? 50 : 0) * sin(camRotY));
+		volY -= 9.8;
+		if (camY < -500){
+			volY = Math.max(0, volY);
+			if (keyValues[4]){
+				volY += 200;
+				camY = -700;
+			}
+		}
+		camY += volY;
 	}
 	//Mouse move event
 	@Override
@@ -295,10 +360,10 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 		mouseX = e.getX();
 		mouseY = e.getY();
 		
-		setCamY(Math.toRadians(centerX - e.getX()));
-		setCamX(Math.max(Math.min(Math.toRadians(centerY - e.getY()), Math.PI / 2), -Math.PI / 2));
+		setCamRotY(Math.toRadians(centerX - e.getX())/2);
+		setCamRotX(Math.max(Math.min(Math.toRadians(e.getY() - centerY)/2, Math.PI / 3), -Math.PI / 3));
 		
-		debug = ("X rotation: " + String.valueOf(centerX - e.getX()) + "\r\nY rotation: " + String.valueOf(Math.max(Math.min(centerY - e.getY(), 90), -90))).toCharArray();
+		debug = ("X rotation: " + String.valueOf((centerX - e.getX())/2) + "\r\nY rotation: " + String.valueOf(Math.max(Math.min((centerY - e.getY())/2, 60), -60))).toCharArray();
 	}
 	//Mouse drag event
 	@Override
@@ -311,4 +376,48 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 		mouseX = e.getX();
 		mouseY = e.getY();
 	}
+	
+	@Override
+	public void keyTyped(KeyEvent keyEvent) {
+	
+	}
+	
+	@Override
+	public void keyPressed(KeyEvent keyEvent) {
+		if (keyEvent.getKeyCode() == KeyEvent.VK_UP){
+			keyValues[0] = true;
+		}
+		if (keyEvent.getKeyCode() == KeyEvent.VK_RIGHT){
+			keyValues[1] = true;
+		}
+		if (keyEvent.getKeyCode() == KeyEvent.VK_DOWN){
+			keyValues[2] = true;
+		}
+		if (keyEvent.getKeyCode() == KeyEvent.VK_LEFT){
+			keyValues[3] = true;
+		}
+		if (keyEvent.getKeyCode() == KeyEvent.VK_SPACE){
+			keyValues[4] = true;
+		}
+	}
+	
+	@Override
+	public void keyReleased(KeyEvent keyEvent) {
+		if (keyEvent.getKeyCode() == KeyEvent.VK_UP){
+			keyValues[0] = false;
+		}
+		if (keyEvent.getKeyCode() == KeyEvent.VK_RIGHT){
+			keyValues[1] = false;
+		}
+		if (keyEvent.getKeyCode() == KeyEvent.VK_DOWN){
+			keyValues[2] = false;
+		}
+		if (keyEvent.getKeyCode() == KeyEvent.VK_LEFT){
+			keyValues[3] = false;
+		}
+		if (keyEvent.getKeyCode() == KeyEvent.VK_SPACE){
+			keyValues[4] = false;
+		}
+	}
+	
 }

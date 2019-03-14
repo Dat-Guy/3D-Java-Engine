@@ -2,13 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="454496bb-508d-4179-af56-5498ef3677f0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/ThreeDimensionalSphere.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/3D-Java-Engine/Main$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/3D-Java-Engine/Main$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/3D-Java-Engine/Main$2.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/3D-Java-Engine/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/3D-Java-Engine/Main.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/3D-Java-Engine/ThreeDimensionalCanvas.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/3D-Java-Engine/ThreeDimensionalCanvas.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ThreeDimensionalCanvas.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ThreeDimensionalCanvas.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ThreeDimensionalShape.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ThreeDimensionalShape.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -25,8 +25,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="476">
-              <caret line="32" column="33" lean-forward="true" selection-start-line="32" selection-start-column="33" selection-end-line="32" selection-end-column="33" />
+            <state relative-caret-position="114">
+              <caret line="9" column="27" lean-forward="true" selection-start-line="9" selection-start-column="27" selection-end-line="9" selection-end-column="27" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -37,20 +37,29 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/ThreeDimensionalCanvas.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="215">
-              <caret line="220" column="67" selection-start-line="220" selection-start-column="67" selection-end-line="220" selection-end-column="67" />
+            <state relative-caret-position="265">
+              <caret line="158" column="80" selection-start-line="158" selection-start-column="80" selection-end-line="158" selection-end-column="80" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#draw3DShape#0;class#ThreeDimensionalCanvas#0" />
-                <element signature="e#8520#8521#0" expanded="true" />
-                <element signature="e#8542#8543#0" expanded="true" />
-                <element signature="e#8586#8587#0" expanded="true" />
-                <element signature="e#8616#8617#0" expanded="true" />
-                <element signature="e#8662#8663#0" expanded="true" />
-                <element signature="e#8693#8694#0" expanded="true" />
-                <element signature="e#9183#9184#0" expanded="true" />
-                <element signature="e#8838#8839#0" expanded="true" />
-                <element signature="e#8862#8863#0" expanded="true" />
+                <element signature="e#9470#9471#0" expanded="true" />
+                <element signature="e#9492#9493#0" expanded="true" />
+                <element signature="e#9536#9537#0" expanded="true" />
+                <element signature="e#9566#9567#0" expanded="true" />
+                <element signature="e#9612#9613#0" expanded="true" />
+                <element signature="e#9643#9644#0" expanded="true" />
+                <element signature="e#8753#8778#1" />
+                <element signature="e#9761#9762#0" expanded="true" />
+                <element signature="e#9787#9788#0" expanded="true" />
+                <element signature="e#9810#9811#0" expanded="true" />
+                <element signature="e#9972#9973#0" expanded="true" />
+                <element signature="e#9995#9996#0" expanded="true" />
+                <element signature="e#10033#10034#0" expanded="true" />
+                <element signature="e#10056#10057#0" expanded="true" />
+                <element signature="e#10094#10095#0" expanded="true" />
+                <element signature="e#10117#10118#0" expanded="true" />
+                <element signature="e#10299#10300#0" expanded="true" />
+                <element signature="e#10322#10323#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -94,9 +103,9 @@
       <list>
         <option value="$PROJECT_DIR$/src/src/Main.java" />
         <option value="$PROJECT_DIR$/src/Canvas.java" />
-        <option value="$PROJECT_DIR$/src/Main.java" />
         <option value="$PROJECT_DIR$/src/ThreeDimensionalShape.java" />
         <option value="$PROJECT_DIR$/src/ThreeDimensionalSphere.java" />
+        <option value="$PROJECT_DIR$/src/Main.java" />
         <option value="$PROJECT_DIR$/src/ThreeDimensionalCanvas.java" />
       </list>
     </option>
@@ -140,7 +149,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552408161249" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552577040101" />
     <property name="restartRequiresConfirmation" value="false" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.General" />
@@ -202,13 +211,13 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.19918145" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39972714" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32742155" />
-      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.49937266" weight="0.32742155" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50062734" side_tool="true" weight="0.32742155" />
       <window_info anchor="bottom" id="Messages" order="10" weight="0.3287858" />
       <window_info anchor="bottom" id="Inspection Results" order="11" weight="0.3287858" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -390,10 +399,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/ThreeDimensionalSphere.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="8" selection-start-line="6" selection-start-column="8" selection-end-line="6" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LICENSE">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="11" lean-forward="true" selection-start-column="11" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="32" column="33" lean-forward="true" selection-start-line="32" selection-start-column="33" selection-end-line="32" selection-end-column="33" />
+        <state relative-caret-position="114">
+          <caret line="9" column="27" lean-forward="true" selection-start-line="9" selection-start-column="27" selection-end-line="9" selection-end-column="27" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -410,29 +433,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ThreeDimensionalSphere.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="8" selection-start-line="6" selection-start-column="8" selection-end-line="6" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/ThreeDimensionalCanvas.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="215">
-          <caret line="220" column="67" selection-start-line="220" selection-start-column="67" selection-end-line="220" selection-end-column="67" />
+        <state relative-caret-position="265">
+          <caret line="158" column="80" selection-start-line="158" selection-start-column="80" selection-end-line="158" selection-end-column="80" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#draw3DShape#0;class#ThreeDimensionalCanvas#0" />
-            <element signature="e#8520#8521#0" expanded="true" />
-            <element signature="e#8542#8543#0" expanded="true" />
-            <element signature="e#8586#8587#0" expanded="true" />
-            <element signature="e#8616#8617#0" expanded="true" />
-            <element signature="e#8662#8663#0" expanded="true" />
-            <element signature="e#8693#8694#0" expanded="true" />
-            <element signature="e#9183#9184#0" expanded="true" />
-            <element signature="e#8838#8839#0" expanded="true" />
-            <element signature="e#8862#8863#0" expanded="true" />
+            <element signature="e#9470#9471#0" expanded="true" />
+            <element signature="e#9492#9493#0" expanded="true" />
+            <element signature="e#9536#9537#0" expanded="true" />
+            <element signature="e#9566#9567#0" expanded="true" />
+            <element signature="e#9612#9613#0" expanded="true" />
+            <element signature="e#9643#9644#0" expanded="true" />
+            <element signature="e#8753#8778#1" />
+            <element signature="e#9761#9762#0" expanded="true" />
+            <element signature="e#9787#9788#0" expanded="true" />
+            <element signature="e#9810#9811#0" expanded="true" />
+            <element signature="e#9972#9973#0" expanded="true" />
+            <element signature="e#9995#9996#0" expanded="true" />
+            <element signature="e#10033#10034#0" expanded="true" />
+            <element signature="e#10056#10057#0" expanded="true" />
+            <element signature="e#10094#10095#0" expanded="true" />
+            <element signature="e#10117#10118#0" expanded="true" />
+            <element signature="e#10299#10300#0" expanded="true" />
+            <element signature="e#10322#10323#0" expanded="true" />
           </folding>
         </state>
       </provider>
