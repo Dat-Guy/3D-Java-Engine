@@ -31,7 +31,7 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 	private double camX = 0;
 	private double camY = 0;
 	private double volY = 0;
-	private double camZ = 0;
+	private double camZ = 10000;
 	private double counter;
 	private ArrayList<Polygon> storedFaces = new ArrayList<>();
 	private ArrayList<Double> zIndex = new ArrayList<>();
@@ -139,31 +139,21 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 			y[i] = cosTheta[2] * Y + sinTheta[2] * X + centerY;
 		}
 		
-		sinTheta = new double[]{-sin(camRotX), sin(camRotY)};
-		cosTheta = new double[]{-cos(camRotX), cos(camRotY)};
+		sinTheta = new double[]{-sin(camRotX), -sin(camRotY)};
+		cosTheta = new double[]{-cos(camRotX), -cos(camRotY)};
 		
 		for (var i = 0; i < pointCount; i++){
 			double X = x[i];
 			double Z = z[i];
-			x[i] = cosTheta[1] * X - sinTheta[1] * Z;
+			x[i] = -(cosTheta[1] * X - sinTheta[1] * Z);
 			z[i] = cosTheta[1] * Z + sinTheta[1] * X;
 		}
 		
 		for (var i = 0; i < pointCount; i++){
-			double X = x[i];
 			double Y = y[i];
 			double Z = z[i];
-			double Yang;
-			x[i] = cosTheta[0] * X - sinTheta[0] * Y;
 			z[i] = cosTheta[0] * Z - sinTheta[0] * Y;
-			y[i] = cosTheta[0] * Y - sinTheta[0] * Z + sinTheta[0] * X;
-		}
-		
-		for (var i = 0; i < pointCount; i++){
-			double X = x[i];
-			double Y = y[i];
-			double Z = z[i];
-			;
+			y[i] = cosTheta[0] * Y + sinTheta[0] * Z;
 		}
 		
 		return new ThreeDimensionalShape(x, y, z, lineList, faceList);
@@ -243,7 +233,7 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 				avgPoint += storedFaces.get(lowZIndex).xpoints[j] + storedFaces.get(lowZIndex).ypoints[j];
 			}
 			avgPoint /= storedFaces.get(lowZIndex).npoints * 2;
-			if (Math.abs(lowZValue / avgPoint) > 5 && lowZValue < 10) {
+			if (lowZValue < 0) {
 				graphics.setColor(faceColors.get(lowZIndex));
 				graphics.fillPolygon(storedFaces.get(lowZIndex));
 				graphics.setColor(lineColors.get(lowZIndex));
@@ -331,10 +321,10 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 				new int[][]{new int[]{0,2,3,1}, new int[]{4,6,7,5}, new int[]{0,4,5,1}, new int[]{1,5,7,3}, new int[]{2,6,7,3}, new int[]{0,4,6,2}},
 				Math.toRadians(rotX-20), Math.toRadians(rotY+20), Math.toRadians(0),
 				new Color(255, 255, 255), new Color(122, 0, 2, 200));
-		add3DShape(new double[]{-50000,-50000, 50000, 50000, -50000, -50000, 50000, 50000}, new double[]{-1001, -1000, -1001, -1000, -1001, -1000, -1001, -1000}, new double[]{-50000, -50000, -50000, -50000, 50000, 50000, 50000, 50000},
+		add3DShape(new double[]{-5000,-5000, 5000, 5000, -5000, -5000, 5000, 5000}, new double[]{-2001, -2000, -2001, -2000, -2001, -2000, -2001, -2000}, new double[]{-5000, -5000, -5000, -5000, 5000, 5000, 5000, 5000},
 				new int[][]{},
 				new int[][]{new int[]{0,2,3,1}, new int[]{4,6,7,5}, new int[]{0,4,5,1}, new int[]{1,5,7,3}, new int[]{2,6,7,3}, new int[]{0,4,6,2}},
-				Math.toRadians(rotX-20), Math.toRadians(rotY+20), Math.toRadians(0),
+				Math.toRadians(rotX), Math.toRadians(rotY), Math.toRadians(0),
 				new Color(255, 255, 255), new Color(0, 122, 16, 80));
 		drawShapes(true);
 		update();
@@ -342,8 +332,8 @@ public class ThreeDimensionalCanvas extends Canvas implements MouseMotionListene
 		
 		//System.out.print("UP: " + keyValues[0] + " RIGHT: " + keyValues[1] + " DOWN: " + keyValues[2] + " LEFT: " + keyValues[3] + " SPACE: " + keyValues[4]);
 		
-		setCamZ(camZ - (keyValues[2] ? 50 : 0) * cos(camRotY) + (keyValues[0] ? 50 : 0) * cos(camRotY) - (keyValues[3] ? 50 : 0) * sin(camRotY) + (keyValues[1] ? 50 : 0) * sin(camRotY));
-		setCamX(camX - (keyValues[1] ? 50 : 0) * cos(camRotY) + (keyValues[3] ? 50 : 0) * cos(camRotY) - (keyValues[2] ? 50 : 0) * sin(camRotY) + (keyValues[0] ? 50 : 0) * sin(camRotY));
+		setCamZ(camZ - (keyValues[0] ? 50 : 0) * cos(camRotY) + (keyValues[2] ? 50 : 0) * cos(camRotY) - (keyValues[1] ? 50 : 0) * sin(camRotY) + (keyValues[3] ? 50 : 0) * sin(camRotY));
+		setCamX(camX - (keyValues[3] ? 50 : 0) * cos(camRotY) + (keyValues[1] ? 50 : 0) * cos(camRotY) - (keyValues[0] ? 50 : 0) * sin(camRotY) + (keyValues[2] ? 50 : 0) * sin(camRotY));
 		volY -= 9.8;
 		if (camY < -500){
 			volY = Math.max(0, volY);
