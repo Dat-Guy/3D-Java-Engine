@@ -1,7 +1,9 @@
+package ThreeDimensionalComponents;
+
 import java.awt.*;
 import java.util.ArrayList;
 
-public class ThreeDimensionalShape {
+class ThreeDimensionalShape {
 	private double[] x;
 	private double[] y;
 	private double[] z;
@@ -17,7 +19,7 @@ public class ThreeDimensionalShape {
 		shapes = new int[0][];
 	}
 	
-	public ThreeDimensionalShape(double[] X, double[] Y, double[] Z, int[][] Lines, int[][] Shapes){
+	ThreeDimensionalShape(double[] X, double[] Y, double[] Z, int[][] Lines, int[][] Shapes){
 		x = X;
 		y = Y;
 		z = Z;
@@ -25,16 +27,16 @@ public class ThreeDimensionalShape {
 		shapes = new int[Shapes.length][];
 		
 		ArrayList<Integer> shapeIndex = new ArrayList<>();
-		ArrayList<ArrayList<Integer>> shapes1 = new ArrayList<>();
 		ArrayList<Double> zList = new ArrayList<>();
 		
 		for (var i = 0; i < Shapes.length; i++){
 			double zSum = 0;
-			shapes1.add(new ArrayList<>());
 			shapeIndex.add(i);
 			for (var j = 0; j < Shapes[i].length; j++){
 				zSum += z[Shapes[i][j]];
-				shapes1.get(i).add(Shapes[i][j]);
+				if (z[Shapes[i][j]] > 0 && Globals.Camera.strictClip){
+					zSum = Globals.Numbers.infinity;
+				}
 			}
 			zList.add(zSum / Shapes[i].length);
 		}
@@ -44,7 +46,7 @@ public class ThreeDimensionalShape {
 		int size = Shapes.length;
 		
 		for (var i = 0; i < size; i++){
-			smallValue = 1.0/0.0;
+			smallValue = Globals.Numbers.infinity;
 			smallZ = -1;
 			for (var j = 0; j < shapeIndex.size(); j++){
 				if (smallValue > zList.get(shapeIndex.get(j))){
@@ -52,42 +54,44 @@ public class ThreeDimensionalShape {
 					smallZ = j;
 				}
 			}
+			if (smallZ == -1){
+				size = i;
+				break;
+			}
 			shapes[i] = Shapes[shapeIndex.get(smallZ)];
 			zValues.add(smallValue);
+			
 			shapeIndex.remove(smallZ);
 		}
-	}
-	
-	private boolean valueIn(int[] a, int b){
-		for (var i = 0; i < a.length; i++){
-			if (a[i] == b){
-				return true;
-			}
+		
+		int[][] temp = new int[size][];
+		for (var i = 0; i < size; i++){
+			temp[i] = shapes[i];
 		}
-		return false;
+		shapes = temp;
 	}
 	
-	public double[] getX() {
+	double[] getX() {
 		return x;
 	}
 	
-	public double[] getY() {
+	double[] getY() {
 		return y;
 	}
 	
-	public double[] getZ() {
+	double[] getZ() {
 		return z;
 	}
 	
-	public int[][] getLines() {
+	int[][] getLines() {
 		return lines;
 	}
 	
-	public int[][] getShapes() {
+	int[][] getShapes() {
 		return shapes;
 	}
 	
-	public ArrayList<Polygon> getPolygons(int centerX, int centerY, double FOV) {
+	ArrayList<Polygon> getPolygons(int centerX, int centerY, double FOV) {
 		ArrayList<Polygon> polygons = new ArrayList<>();
 		for (var i = 0; i < shapes.length; i++){
 			polygons.add(new Polygon());
@@ -97,7 +101,7 @@ public class ThreeDimensionalShape {
 		}
 		return polygons;
 	}
-	public ArrayList<Double> getZList(){
+	ArrayList<Double> getZList(){
 		return zValues;
 	}
 }
